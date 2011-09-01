@@ -28,7 +28,7 @@ void testApp::update( void ) {
 	// clean previous samples in the buffer
 	for( int k=0; k<BOINGLEN; k++ ) boing[k] = 0.0;
 	
-	// synthesize damped cosine
+	// synthesize damped sinusoid
 	for( int k=0; k<BOINGLEN; k++ ) {
 		
 		// equation of the damped sinusoid with pitch and decay
