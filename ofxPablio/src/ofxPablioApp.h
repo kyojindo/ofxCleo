@@ -1,6 +1,7 @@
 /*
  * ofxPablioApp.h ~ openFrameworks
- * by Nicolas d'Alessandro <nicolas@dalessandro.be>
+ * Nicolas d'Alessandro <nicolas@dalessandro.be>
+ * and Johnty Wang <info@johnty.ca>
  *
  * ofxPablio is an adaption of Bencina & Burk's PABLIO
  * library for asynchronous read/write of audio streams.

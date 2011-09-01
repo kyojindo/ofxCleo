@@ -1,3 +1,36 @@
+/*
+ * ofxAudioOut.cpp ~ openFrameworks
+ * Nicolas d'Alessandro <nicolas@dalessandro.be>
+ * and Johnty Wang <info@johnty.ca>
+ *
+ * ofxCleo is an audio patching utiliy for openFrameworks.
+ * It allows to connect inlets and outlets from various kinds
+ * of objects ( controllers, modifiers, generators, filters )
+ * into a graph and solve it in realtime. ofxCleo also allows
+ * to simply create new objects to be patched by inheritance.
+ *
+ *
+ * MIT License ~ Copyright (c) 2011 University of British Columbia
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
 #include "ofxAudioOut.h"
 
 ofxAudioOut::ofxAudioOut( void ) {
@@ -7,41 +40,46 @@ ofxAudioOut::ofxAudioOut( void ) {
 
 ofxAudioOut::~ofxAudioOut( void ) {
 	
-	if( InterlacedBuffer != NULL ) free( InterlacedBuffer );
+	if( InterlacedBuffer != NULL ) {
+		
+		free( InterlacedBuffer );
+	}
 }
 
-void ofxAudioOut::setStream( ofxFablioStream *stream ) {
+void ofxAudioOut::setStream( ofxPablioStream *pablio ) {
 	
-	Stream = stream;
+	PABLIO = pablio;
 }
 
 void ofxAudioOut::setup( void ) {
 	
-	InBuf.resize( Stream->nOfOutputChannels );
-	InterlacedBuffer = (float *) malloc( Stream->nOfOutputChannels*tickBufferSize*sizeof(float) );
+	InBuf.resize( PABLIO->nOfOutputChannels );
 	
-	for( int k=0; k<Stream->nOfOutputChannels; k++ ) {
+	InterlacedBuffer = // create the audio interlaced buffer dynamically
+	(float *) malloc( PABLIO->nOfOutputChannels*tickBufferSize*sizeof(float) );
+	
+	for( int k=0; k<PABLIO->nOfOutputChannels; k++ ) {
 		
-		setAudioInlet( &InBuf[k], DacIn+k );
+		setAudioInlet( &InBuf[k], DacSigIn+k );
 	}
 }
 
 void ofxAudioOut::tick( void ) {
 	
 	// browse over the # of channels
-	for( int m=0; m<Stream->nOfOutputChannels; m++ ) {
+	for( int m=0; m<PABLIO->nOfOutputChannels; m++ ) {
 		
 		// tune pointer to mth channel
-		InBuf[m] = *( aInlet[ DacIn+m ] );
+		InBuf[m] = *( aInlet[ DacSigIn+m ] );
 			
 		// browse over the audio buffer
 		for( int k=0; k<tickBufferSize; k++ ) {
 			
-			InterlacedBuffer[ Stream->nOfOutputChannels*k + m ] = InBuf[ m ][ k ];
+			InterlacedBuffer[ PABLIO->nOfOutputChannels*k + m ] = InBuf[ m ][ k ];
 			// and interlace everything into one big chunck
 		}
 	}
 	
 	// write the resulting audio samples into ringbuffer
-	Stream->writeAudio( InterlacedBuffer, tickBufferSize );
+	PABLIO->writeAudio( InterlacedBuffer, tickBufferSize );
 }

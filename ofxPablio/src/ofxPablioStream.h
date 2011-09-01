@@ -1,8 +1,3 @@
-#pragma once
-
-#include <ctime>
-#include "pa_ringbuffer.h"
-
 /*
  * $Id: pablio.h 1083 2006-08-23 07:30:49Z rossb $
  * PABLIO.h
@@ -48,6 +43,11 @@
  * requested that these non-binding requests be included along with the 
  * license above.
  */
+
+#pragma once
+
+#include <ctime>
+#include "pa_ringbuffer.h"
 
 class ofxPablioStream {
 	

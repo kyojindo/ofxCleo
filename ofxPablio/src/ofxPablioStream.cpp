@@ -1,5 +1,3 @@
-#include "ofxPablioStream.h"
-
 /*
  * $Id: pablio.c 1151 2006-11-29 02:11:16Z leland_lucius $
  * pablio.c
@@ -44,6 +42,8 @@
  * requested that these non-binding requests be included along with the 
  * license above.
  */
+
+#include "ofxPablioStream.h"
 
 // create the PABLIO stream: initialize I/O ringbuffers
 ofxPablioStream::ofxPablioStream( long sr, long bufsize, long inchan, long outchan ) {
